@@ -1521,63 +1521,168 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----------------------------------------------------
-  // EFEK CONFETTI BINTANG (VICTORY SCREEN)
+  // EFEK CONFETTI BINTANG & PETA (VICTORY SCREEN)
   // ----------------------------------------------------
   function triggerConfetti() {
     const canvas = document.getElementById("victory-canvas");
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
+
+    const updateSize = () => {
+      canvas.width = canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth;
+      canvas.height = canvas.parentElement ? canvas.parentElement.clientHeight : window.innerHeight;
+    };
+    updateSize();
 
     const particles = [];
-    const colors = ["#ff7043", "#ffb74d", "#66bb6a", "#a3e2f5", "#ba68c8", "#ffeb3b"];
+    const colors = [
+      "#ff1744", "#ff9100", "#ffea00", "#00e676", "#00e5ff", 
+      "#d500f9", "#ff4081", "#76ff03", "#651fff", "#ffd54f"
+    ];
+    const shapes = ["rect", "circle", "star", "ribbon"];
 
-    for (let i = 0; i < 90; i++) {
+    // Function pembuat partikel meriam confetti
+    const createBurstParticle = (x, y, angleRange, speedRange) => {
+      const angle = angleRange[0] + Math.random() * (angleRange[1] - angleRange[0]);
+      const speed = speedRange[0] + Math.random() * (speedRange[1] - speedRange[0]);
+      return {
+        x,
+        y,
+        size: Math.random() * 8 + 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        gravity: 0.12,
+        drag: 0.96,
+        rotation: Math.random() * 360,
+        rotationSpeed: Math.random() * 10 - 5,
+        oscillation: Math.random() * Math.PI * 2,
+        oscillationSpeed: Math.random() * 0.08 + 0.02
+      };
+    };
+
+    // Erupsi Meriam Kiri Bawah
+    for (let i = 0; i < 45; i++) {
+      particles.push(createBurstParticle(0, canvas.height, [-Math.PI / 2, -Math.PI / 6], [10, 22]));
+    }
+    // Erupsi Meriam Kanan Bawah
+    for (let i = 0; i < 45; i++) {
+      particles.push(createBurstParticle(canvas.width, canvas.height, [-Math.PI * 5 / 6, -Math.PI / 2], [10, 22]));
+    }
+    // Hujan Confetti dari Atas
+    for (let i = 0; i < 60; i++) {
       particles.push({
         x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - canvas.height,
-        r: Math.random() * 8 + 5,
+        y: Math.random() * -canvas.height * 0.5,
+        size: Math.random() * 8 + 6,
         color: colors[Math.floor(Math.random() * colors.length)],
-        vx: Math.random() * 4 - 2,
-        vy: Math.random() * 3 + 2.5,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+        vx: Math.random() * 2 - 1,
+        vy: Math.random() * 3 + 2,
+        gravity: 0.05,
+        drag: 0.98,
         rotation: Math.random() * 360,
-        rotationSpeed: Math.random() * 4 - 2
+        rotationSpeed: Math.random() * 6 - 3,
+        oscillation: Math.random() * Math.PI * 2,
+        oscillationSpeed: Math.random() * 0.06 + 0.02
       });
     }
 
-    function draw() {
+    let spawnTimer = 0;
+
+    function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+      let rot = (Math.PI / 2) * 3;
+      let x = cx;
+      let y = cy;
+      let step = Math.PI / spikes;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - outerRadius);
+      for (let i = 0; i < spikes; i++) {
+        x = cx + Math.cos(rot) * outerRadius;
+        y = cy + Math.sin(rot) * outerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+
+        x = cx + Math.cos(rot) * innerRadius;
+        y = cy + Math.sin(rot) * innerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+      }
+      ctx.lineTo(cx, cy - outerRadius);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function render() {
+      if (gameState.currentScreen !== "victory") return;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      let alive = false;
 
-      particles.forEach(p => {
+      // Regenerasi confetti dari atas secara konstan agar pesta tetap meriah
+      spawnTimer++;
+      if (spawnTimer % 6 === 0 && particles.length < 180) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: -15,
+          size: Math.random() * 8 + 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          shape: shapes[Math.floor(Math.random() * shapes.length)],
+          vx: Math.random() * 2 - 1,
+          vy: Math.random() * 2 + 1.5,
+          gravity: 0.04,
+          drag: 0.99,
+          rotation: Math.random() * 360,
+          rotationSpeed: Math.random() * 6 - 3,
+          oscillation: Math.random() * Math.PI * 2,
+          oscillationSpeed: Math.random() * 0.06 + 0.02
+        });
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+
+        p.vx *= p.drag;
+        p.vy = (p.vy + p.gravity) * p.drag;
+        p.x += p.vx + Math.sin(p.oscillation) * 0.8;
         p.y += p.vy;
-        p.x += p.vx;
         p.rotation += p.rotationSpeed;
+        p.oscillation += p.oscillationSpeed;
 
-        if (p.y < canvas.height) alive = true;
+        if (p.y > canvas.height + 20) {
+          particles.splice(i, 1);
+          continue;
+        }
 
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate((p.rotation * Math.PI) / 180);
         ctx.fillStyle = p.color;
 
-        ctx.beginPath();
-        if (p.r % 2 === 0) {
-          ctx.fillRect(-p.r, -p.r, p.r * 2, p.r * 2);
-        } else {
-          ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+        if (p.shape === "circle") {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
           ctx.fill();
+        } else if (p.shape === "star") {
+          drawStar(ctx, 0, 0, 5, p.size, p.size / 2);
+        } else if (p.shape === "ribbon") {
+          const scaleY = Math.cos(p.oscillation * 2);
+          ctx.scale(1, scaleY);
+          ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+        } else {
+          const scaleX = Math.cos(p.oscillation * 2);
+          ctx.scale(scaleX, 1);
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
         }
-        ctx.restore();
-      });
 
-      if (alive && gameState.currentScreen === "victory") {
-        requestAnimationFrame(draw);
+        ctx.restore();
       }
+
+      requestAnimationFrame(render);
     }
 
-    draw();
+    render();
   }
 
   // ----------------------------------------------------

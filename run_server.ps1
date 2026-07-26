@@ -5,7 +5,7 @@
 Add-Type -AssemblyName System.Web
 
 $port = 8000
-$workspaceDir = "C:\Users\rafae\.gemini\antigravity\scratch\dongeng_interaktif"
+$workspaceDir = $PSScriptRoot
 
 # Mengambil IP lokal komputer untuk kemudahan koneksi mobile
 $localIp = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { 
