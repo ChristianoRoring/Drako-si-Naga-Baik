@@ -54,6 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const tutorialOverlay = document.getElementById("tutorial-overlay");
   const btnTutorialStart = document.getElementById("btn-tutorial-start");
 
+  // Synopsis Pop-Up Overlay
+  const synopsisOverlay = document.getElementById("synopsis-overlay");
+  const btnSynopsisReplay = document.getElementById("btn-synopsis-replay");
+  const btnSynopsisStart = document.getElementById("btn-synopsis-start");
+  const btnSynopsisSkipX = document.getElementById("btn-synopsis-skip-x");
+
   // ----------------------------------------------------
   // RENDERING MASKOT DRAKO (SVG DINAMIS)
   // ----------------------------------------------------
@@ -607,7 +613,14 @@ document.addEventListener("DOMContentLoaded", () => {
       renderDrako(victoryMascotBox, "happy");
       audio.playVictoryCelebration();
       triggerConfetti();
+
+      // Narator membacakan kalimat apresiasi yang hangat dan membanggakan untuk anak di akhir cerita
+      const appreciationText = "Hore! Hebat sekali adik-adik! Terima kasih ya sudah membantu Drako menyelesaikan kisahnya dengan sangat baik. Drako sekarang sangat bahagia dan memiliki banyak teman baru. Adik-adik memang anak yang pintar dan luar biasa!";
       
+      setTimeout(() => {
+        audio.speak(appreciationText);
+      }, 600);
+
       // Simpan progres selesai
       gameState.storyCompleted = true;
       localStorage.setItem("drako_completed", "true");
@@ -617,27 +630,49 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   // LOGIKA ALUR GAMEPLAY
   // ----------------------------------------------------
-  function startStory() {
+  function openTutorial() {
+    audio.playClick();
+    if (tutorialOverlay) {
+      tutorialOverlay.classList.add("active");
+    }
+
+    const tutorialText = "Halo adik-adik! Yuk lihat cara bermainnya! Pertama, seret suku kata untuk membuat kata. Kedua, tarik kata hijau ke dalam kotak cerita. Ketiga, adik-adik juga bisa mengetuk ikon-ikon tombol di bawah ini untuk mendengarkan fungsinya masing-masing! Selamat bermain!";
+    
+    audio.stopSpeaking();
+    setTimeout(() => {
+      audio.speak(tutorialText);
+    }, 350);
+  }
+
+  function openSynopsis() {
+    audio.playClick();
+    if (synopsisOverlay) {
+      synopsisOverlay.classList.add("active");
+    }
+
+    const introText = "Di sebuah hutan, hiduplah seekor naga hijau yaitu Drako. Drako adalah seekor naga hijau yang baik hati, namun dia tidak memiliki teman. Ayo adik-adik bantu Drako untuk memperbaiki kisahnya, dengan cara adik-adik harus memperbaiki kata di sebelah kanan dengan cara menyeret suku-suku kata ke kotak-kotak kecil. Lalu setelah katanya diperbaiki, kata tersebut kita geser ke bagian cerita yang tidak lengkap di sebelah kiri.";
+    
+    audio.stopSpeaking();
+    setTimeout(() => {
+      audio.speak(introText);
+    }, 350);
+  }
+
+  function startStory(showTutorial = false, skipAutoNarration = false) {
     gameState.activeStory = window.STORIES_DATA[0];
     gameState.currentPageIndex = 0;
     audio.playPageFlip();
     showScreen("gameBoard");
 
-    // 1. Tampilkan Overlay Petunjuk Bermain
-    if (tutorialOverlay) {
-      tutorialOverlay.classList.add("active");
+    if (showTutorial) {
+      openTutorial();
+      loadScene(0, true);
+    } else {
+      if (tutorialOverlay) {
+        tutorialOverlay.classList.remove("active");
+      }
+      loadScene(0, skipAutoNarration);
     }
-
-    // 2. Bacakan Petunjuk Bermain secara lengkap oleh Narator
-    const tutorialText = "Halo! Mari bantu Drako melengkapi cerita! Caranya, eja suku kata di sebelah kanan dengan benar, lalu tarik kartu kata yang sudah jadi ke dalam kotak rumpang di sebelah kiri. Selamat bermain!";
-    
-    audio.stopSpeaking();
-    setTimeout(() => {
-      audio.speak(tutorialText);
-    }, 400);
-
-    // 3. Muat scene 0 di latar belakang, namun lewati pembacaan otomatis ceritanya agar tidak tumpang tindih dengan tutorial
-    loadScene(0, true);
   }
 
   function loadScene(pageIndex, skipAutoNarration = false) {
@@ -869,13 +904,13 @@ document.addEventListener("DOMContentLoaded", () => {
       blockEl.className = `interaction-block ${bState.isSpelledCorrectly ? 'completed-spelled' : ''}`;
       blockEl.id = `block-${blockIdx}`;
 
-      // Baris Atas: Tombol Hint, Gambar, & Label ejaan
+      // Baris Atas: Tombol Petunjuk, Gambar, & Label ejaan
       const headerRow = document.createElement("div");
       headerRow.className = "block-header-row";
 
       const hintBtn = document.createElement("button");
       hintBtn.className = "btn-hint-bubble";
-      hintBtn.innerHTML = `💡 Hint`;
+      hintBtn.innerHTML = `💡 Petunjuk`;
       
       const hintImg = document.createElement("div");
       hintImg.className = "hint-image-placeholder";
@@ -1694,30 +1729,139 @@ document.addEventListener("DOMContentLoaded", () => {
     audio.initContext();
   }, { once: true });
 
-  // Home -> Play
+  // Home -> Play (Membuka Pop-Up Sinopsis & Petunjuk Awal)
   document.getElementById("btn-welcome-play").addEventListener("click", () => {
-    // Bacakan judul cerita terlebih dahulu sebelum masuk ke scene
-    audio.speakWord("Drako si naga baik", null, () => {
-      startStory();
-    });
+    openSynopsis();
   });
 
-  // Tutup Tutorial Overlay -> Mulai Scene 1
+  // Synopsis -> Putar Ulang Audio
+  if (btnSynopsisReplay) {
+    btnSynopsisReplay.addEventListener("click", () => {
+      audio.playClick();
+      const introText = "Di sebuah hutan, hiduplah seekor naga hijau yaitu Drako. Drako adalah seekor naga hijau yang baik hati, namun dia tidak memiliki teman. Ayo adik-adik bantu Drako untuk memperbaiki kisahnya, dengan cara adik-adik harus memperbaiki kata di sebelah kanan dengan cara menyeret suku-suku kata ke kotak-kotak kecil. Lalu setelah katanya diperbaiki, kata tersebut kita geser ke bagian cerita yang tidak lengkap di sebelah kiri.";
+      audio.stopSpeaking();
+      setTimeout(() => {
+        audio.speak(introText);
+      }, 200);
+    });
+  }
+
+  // Synopsis -> Tutup / Skip / Start Gameplay
+  const startFromSynopsis = () => {
+    audio.playClick();
+    audio.stopSpeaking();
+    if (synopsisOverlay) {
+      synopsisOverlay.classList.remove("active");
+    }
+    startStory(false, false);
+  };
+
+  if (btnSynopsisStart) {
+    btnSynopsisStart.addEventListener("click", startFromSynopsis);
+  }
+
+  if (btnSynopsisSkipX) {
+    btnSynopsisSkipX.addEventListener("click", startFromSynopsis);
+  }
+
+  // Home -> Tutorial (Cara Bermain)
+  const btnWelcomeTutorial = document.getElementById("btn-welcome-tutorial");
+  if (btnWelcomeTutorial) {
+    btnWelcomeTutorial.addEventListener("click", () => {
+      openTutorial();
+    });
+  }
+
+  // Gameplay -> Tutorial (Cara Bermain - Icon ?)
+  const btnGameTutorial = document.getElementById("btn-game-tutorial");
+  if (btnGameTutorial) {
+    btnGameTutorial.addEventListener("click", () => {
+      openTutorial();
+    });
+  }
+
+  // Tutup Tutorial Overlay -> Mulai Game / Lanjut Narasi
   const startGameplayAfterTutorial = () => {
     audio.playClick();
     audio.stopSpeaking();
     if (tutorialOverlay) {
       tutorialOverlay.classList.remove("active");
     }
-    // Mainkan suara narasi Scene 1 secara normal setelah jeda kecil
-    setTimeout(() => {
-      playCurrentSceneNarration();
-    }, 350);
+
+    if (gameState.currentScreen !== "gameBoard") {
+      startStory(false);
+    } else {
+      // Mainkan suara narasi Scene secara normal setelah jeda kecil
+      setTimeout(() => {
+        playCurrentSceneNarration();
+      }, 350);
+    }
   };
 
   if (btnTutorialStart) {
     btnTutorialStart.addEventListener("click", startGameplayAfterTutorial);
   }
+
+  // Tombol X Tutup Modal Tutorial
+  const btnTutorialClose = document.getElementById("btn-tutorial-close");
+  if (btnTutorialClose) {
+    btnTutorialClose.addEventListener("click", () => {
+      audio.playClick();
+      audio.stopSpeaking();
+      if (tutorialOverlay) {
+        tutorialOverlay.classList.remove("active");
+      }
+      if (gameState.currentScreen === "gameBoard") {
+        setTimeout(() => {
+          playCurrentSceneNarration();
+        }, 350);
+      }
+    });
+  }
+
+  // Tutorial -> Interactive Button Guide (Ketuk ikon untuk mendengarkan suara fungsi tombol)
+  const tutorialBtnExplanations = {
+    speaker: {
+      caption: "🔊 Tombol Suara: Mendengarkan cerita Drako atau menghentikan narasi.",
+      speech: "Tombol suara ini berguna untuk mendengarkan cerita Drako atau menghentikan narasi yang sedang dibaca."
+    },
+    hint: {
+      caption: "💡 Tombol Petunjuk: Melihat gambar bantuan dan mendengar pengucapan kata.",
+      speech: "Tombol petunjuk ini berguna untuk melihat gambar bantuan dan mendengarkan pengucapan kata."
+    },
+    settings: {
+      caption: "⚙️ Tombol Pengaturan: Mengatur volume musik latar dan narator.",
+      speech: "Tombol pengaturan ini berguna untuk mengatur volume musik latar dan suara narator."
+    },
+    tutorial: {
+      caption: "❓ Tombol Cara Bermain: Membuka kembali petunjuk cara bermain.",
+      speech: "Tombol tanda tanya ini berguna untuk membuka kembali petunjuk cara bermain."
+    },
+    next: {
+      caption: "➡️ Tombol Selanjutnya: Lanjut ke babak cerita berikutnya.",
+      speech: "Tombol panah ini berguna untuk melanjutkan cerita ke babak berikutnya setelah kata-kata berhasil dilengkapi."
+    }
+  };
+
+  const tutorialIconChips = document.querySelectorAll(".tutorial-icon-chip");
+  const tutorialBtnCaptionDisplay = document.getElementById("tutorial-btn-caption-display");
+
+  tutorialIconChips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      audio.playClick();
+      const btnType = chip.dataset.btnType;
+      const explanation = tutorialBtnExplanations[btnType];
+      if (explanation) {
+        if (tutorialBtnCaptionDisplay) {
+          tutorialBtnCaptionDisplay.textContent = explanation.caption;
+        }
+        audio.stopSpeaking();
+        setTimeout(() => {
+          audio.speak(explanation.speech);
+        }, 150);
+      }
+    });
+  });
 
   // Welcome / Gameplay / Victory -> Settings Modal
   const openSettings = () => {

@@ -1277,15 +1277,156 @@ body {
 }
 
 .tutorial-icon {
-  font-size: 44px;
-  margin-bottom: 12px;
+  font-size: 36px;
+  margin-bottom: 4px;
   display: inline-block;
   animation: bounceTutorial 2s infinite ease-in-out;
 }
 
+.tutorial-title {
+  font-size: 22px;
+  color: var(--color-orange);
+  margin-bottom: 8px;
+}
+
+/* GRID KARTU AUDIO-VISUAL TUTORIAL */
+.tutorial-visual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 14px 0 16px 0;
+}
+
+.tutorial-card {
+  background: #f8f9fa;
+  border: 3px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 10px 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 0 #cfd8dc;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.tutorial-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-orange);
+}
+
+.tutorial-step-badge {
+  position: absolute;
+  top: -10px;
+  left: -8px;
+  background: var(--color-orange);
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 0 var(--color-orange-dark);
+}
+
+.tutorial-visual-demo {
+  width: 100%;
+  height: 64px;
+  background: white;
+  border-radius: 10px;
+  border: 2px dashed #b0bec5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin-bottom: 6px;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.demo-syllables {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.demo-card-syllable {
+  background: white;
+  border: 2px solid var(--color-pastel-blue);
+  color: var(--color-dark);
+  font-weight: 700;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  box-shadow: 0 1.5px 0 var(--color-pastel-blue);
+  line-height: 1.1;
+}
+
+.demo-arrow {
+  font-size: 10px;
+  color: #ff9800;
+  font-weight: 800;
+}
+
+.demo-result-card, .demo-green-card {
+  background: var(--color-success);
+  color: white;
+  font-weight: 700;
+  font-size: 10px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  border: 2px solid var(--color-success-dark);
+  box-shadow: 0 2px 0 var(--color-success-dark);
+}
+
+.demo-story-blank {
+  background: #fff9c4;
+  border: 2px solid #fbc02d;
+  color: #f57f17;
+  font-weight: 700;
+  font-size: 10px;
+  padding: 3px 4px;
+  border-radius: 6px;
+}
+
+.demo-speaker-btn {
+  background: var(--color-purple);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 0 #5e35b1;
+  animation: pulseSpeaker 1.5s infinite;
+}
+
+.demo-soundwaves {
+  font-size: 12px;
+}
+
+@keyframes pulseSpeaker {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+.tutorial-card-caption {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
 @keyframes bounceTutorial {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 .tutorial-title {

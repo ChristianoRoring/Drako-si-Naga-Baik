@@ -46,6 +46,11 @@
       <button class="btn-bubble btn-orange btn-play" id="btn-welcome-play">
         <i data-lucide="play" style="width: 32px; height: 32px; fill: white;"></i> Mulai Bermain
       </button>
+
+      <!-- Tombol Cara Bermain (Tutorial) Kecil -->
+      <button class="btn-bubble btn-purple btn-tutorial-welcome" id="btn-welcome-tutorial" style="margin-top: 10px; padding: 8px 22px; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; border-radius: 20px; box-shadow: 0 4px 0 #5e35b1;">
+        <i data-lucide="help-circle" style="width: 20px; height: 20px; fill: white;"></i> Cara Bermain
+      </button>
     </div>
 
     <!-- ---------------------------------------------------- -->
@@ -62,6 +67,9 @@
           </button>
           <button class="btn-bubble btn-purple btn-round" id="btn-game-settings" title="Pengaturan">
             <i data-lucide="settings"></i>
+          </button>
+          <button class="btn-bubble btn-purple btn-round" id="btn-game-tutorial" title="Cara Bermain">
+            <i data-lucide="help-circle"></i>
           </button>
         </div>
 
@@ -180,18 +188,139 @@
       </div>
     </div>
 
-    <!-- Overlay Petunjuk Bermain (Tutorial) -->
+    <!-- Overlay Petunjuk Bermain (Tutorial Audio-Visual) -->
     <div class="tutorial-overlay" id="tutorial-overlay">
-      <div class="tutorial-box">
-        <div class="tutorial-icon">🎮✨</div>
-        <h2 class="tutorial-title">Cara Bermain</h2>
-        <div class="tutorial-body">
-          <p>1. 🧩 <strong>Eja suku kata</strong> di sebelah kanan dengan menyeretnya.</p>
-          <p>2. 🧲 <strong>Tarik kartu kata hijau</strong> ke dalam kotak rumpang di sebelah kiri.</p>
-        </div>
-        <button class="btn-bubble btn-orange btn-play" id="btn-tutorial-start" style="width: 100%; justify-content: center; font-size: 18px;">
-          <i data-lucide="play" style="width: 24px; height: 24px; fill: white;"></i> Ayo Mulai!
+      <div class="tutorial-box" style="position: relative;">
+        <!-- Tombol Tutup X (Top-Right) -->
+        <button class="btn-bubble btn-orange btn-round" id="btn-tutorial-close" title="Tutup Petunjuk" style="position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; font-size: 16px; padding: 0; display: flex; align-items: center; justify-content: center; z-index: 10;">
+          <i data-lucide="x" style="width: 18px; height: 18px; stroke-width: 3;"></i>
         </button>
+
+        <div class="tutorial-header">
+          <div class="tutorial-icon">🎮✨</div>
+          <h2 class="tutorial-title">Cara Bermain</h2>
+        </div>
+
+        <!-- 3 Kartu Visual Audio-Visual Langkah Permainan -->
+        <div class="tutorial-visual-grid">
+          <!-- Langkah 1: Susun Suku Kata -->
+          <div class="tutorial-card">
+            <div class="tutorial-step-badge">1</div>
+            <div class="tutorial-visual-demo demo-step-1">
+              <div class="demo-syllables">
+                <span class="demo-card-syllable">ba</span>
+                <span class="demo-card-syllable">tu</span>
+              </div>
+              <div class="demo-arrow">➔</div>
+              <div class="demo-result-card">batu</div>
+            </div>
+            <div class="tutorial-card-caption">
+              <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--color-orange);"></i> Susun Kata
+            </div>
+          </div>
+
+          <!-- Langkah 2: Lengkapi Cerita -->
+          <div class="tutorial-card">
+            <div class="tutorial-step-badge">2</div>
+            <div class="tutorial-visual-demo demo-step-2">
+              <div class="demo-green-card">batu</div>
+              <div class="demo-arrow">➔</div>
+              <div class="demo-story-blank">[ batu ]</div>
+            </div>
+            <div class="tutorial-card-caption">
+              <i data-lucide="target" style="width: 14px; height: 14px; color: var(--color-success);"></i> Isi Cerita
+            </div>
+          </div>
+
+          <!-- Langkah 3: Dengar Narasi Suara -->
+          <div class="tutorial-card">
+            <div class="tutorial-step-badge">3</div>
+            <div class="tutorial-visual-demo demo-step-3">
+              <div class="demo-speaker-btn">
+                <i data-lucide="volume-2" style="width: 18px; height: 18px; fill: white;"></i>
+              </div>
+              <div class="demo-soundwaves">🔊✨</div>
+            </div>
+            <div class="tutorial-card-caption">
+              <i data-lucide="volume-2" style="width: 14px; height: 14px; color: var(--color-purple);"></i> Dengar Suara
+            </div>
+          </div>
+        </div>
+
+        <!-- Bagian Interaktif Panduan Tombol (Ketuk ikon untuk dengar suara fungsi) -->
+        <div class="tutorial-btn-guide-section" style="margin-top: 10px; background: #f1f8e9; border: 2.5px solid #c8e6c9; border-radius: 16px; padding: 10px 12px; text-align: center;">
+          <div class="tutorial-guide-title" style="font-size: 12.5px; font-weight: 800; color: #2e7d32; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <i data-lucide="touchpad" style="width: 16px; height: 16px; color: #2e7d32;"></i> Ketuk Ikon Tombol untuk Dengar Fungsinya:
+          </div>
+
+          <div class="tutorial-btn-chips-grid" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center;">
+            <!-- 1. Tombol Suara Narator -->
+            <button class="tutorial-icon-chip" data-btn-type="speaker" title="Tombol Suara Narator" style="background: var(--color-purple); color: white; border: none; border-radius: 12px; padding: 5px 9px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2.5px 0 #5e35b1; cursor: pointer;">
+              <i data-lucide="volume-2" style="width: 15px; height: 15px; fill: white;"></i> Suara Cerita
+            </button>
+
+            <!-- 2. Tombol Petunjuk -->
+            <button class="tutorial-icon-chip" data-btn-type="hint" title="Tombol Petunjuk" style="background: #7e57c2; color: white; border: none; border-radius: 12px; padding: 5px 9px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2.5px 0 #5e35b1; cursor: pointer;">
+              💡 Petunjuk
+            </button>
+
+            <!-- 3. Tombol Pengaturan -->
+            <button class="tutorial-icon-chip" data-btn-type="settings" title="Tombol Pengaturan" style="background: var(--color-purple); color: white; border: none; border-radius: 12px; padding: 5px 9px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2.5px 0 #5e35b1; cursor: pointer;">
+              <i data-lucide="settings" style="width: 15px; height: 15px;"></i> Pengaturan
+            </button>
+
+            <!-- 4. Tombol Cara Bermain (?) -->
+            <button class="tutorial-icon-chip" data-btn-type="tutorial" title="Tombol Petunjuk Bermain" style="background: var(--color-purple); color: white; border: none; border-radius: 12px; padding: 5px 9px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2.5px 0 #5e35b1; cursor: pointer;">
+              <i data-lucide="help-circle" style="width: 15px; height: 15px;"></i> Cara Bermain
+            </button>
+
+            <!-- 5. Tombol Selanjutnya -->
+            <button class="tutorial-icon-chip" data-btn-type="next" title="Tombol Selanjutnya" style="background: var(--color-primary); color: white; border: none; border-radius: 12px; padding: 5px 9px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2.5px 0 var(--color-primary-dark); cursor: pointer;">
+              <i data-lucide="arrow-right" style="width: 15px; height: 15px;"></i> Selanjutnya
+            </button>
+          </div>
+
+          <!-- Deskripsi Suara & Teks Fungsi Tombol Dinamis -->
+          <div id="tutorial-btn-caption-display" style="margin-top: 8px; font-size: 11.5px; font-weight: 700; color: #1b5e20; background: white; padding: 5px 8px; border-radius: 8px; border: 1.5px solid #a5d6a7; min-height: 18px; text-align: center;">
+            👈 Ketuk salah satu ikon tombol di atas!
+          </div>
+        </div>
+
+        <button class="btn-bubble btn-orange btn-play" id="btn-tutorial-start" style="width: 100%; justify-content: center; font-size: 18px; margin-top: 10px;">
+          <i data-lucide="play" style="width: 24px; height: 24px; fill: white;"></i> Mulai Bermain!
+        </button>
+      </div>
+    </div>
+
+    <!-- Overlay Sinopsis & Petunjuk Awal Permainan -->
+    <div class="tutorial-overlay" id="synopsis-overlay">
+      <div class="tutorial-box synopsis-box" style="position: relative; max-width: 520px; padding: 20px 24px;">
+        <!-- Tombol Tutup X (Skip Sinopsis) -->
+        <button class="btn-bubble btn-orange btn-round" id="btn-synopsis-skip-x" title="Lewati Sinopsis" style="position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; font-size: 16px; padding: 0; display: flex; align-items: center; justify-content: center; z-index: 10;">
+          <i data-lucide="x" style="width: 18px; height: 18px; stroke-width: 3;"></i>
+        </button>
+
+        <div class="tutorial-header">
+          <div class="tutorial-icon">🐉✨</div>
+          <h2 class="tutorial-title" style="color: var(--color-primary-dark); font-size: 22px; margin-bottom: 4px;">Kisah Drako</h2>
+        </div>
+
+        <div class="synopsis-content-box" style="background: #fff8e1; border: 2.5px dashed #ffe082; border-radius: 16px; padding: 12px 14px; margin: 10px 0; text-align: left; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);">
+          <p class="synopsis-text" style="font-size: 13.5px; line-height: 1.55; color: #4e342e; margin: 0; font-weight: 600;">
+            Di sebuah hutan, hiduplah seekor naga hijau yaitu Drako. Drako adalah seekor naga hijau yang baik hati, namun dia tidak memiliki teman.. Ayo adik-adik bantu Drako untuk memperbaiki kisahnya, dengan cara adik-adik harus memperbaiki kata di sebelah kanan dengan cara menyeret suku-suku kata ke kotak-kotak kecil, lalu setelah katanya diperbaiki, kata tersebut kita geser ke bagian cerita yang tidak lengkap di sebelah kiri.
+          </p>
+        </div>
+
+        <!-- Tombol Aksi: Putar Ulang & Ayo Mulai -->
+        <div class="synopsis-action-buttons" style="display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 12px;">
+          <button class="btn-bubble btn-purple" id="btn-synopsis-replay" style="padding: 10px 16px; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i> Putar Ulang
+          </button>
+
+          <button class="btn-bubble btn-orange btn-play" id="btn-synopsis-start" style="padding: 10px 24px; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; flex: 1; justify-content: center;">
+            <i data-lucide="play" style="width: 22px; height: 22px; fill: white;"></i> Ayo Mulai!
+          </button>
+        </div>
       </div>
     </div>
 
